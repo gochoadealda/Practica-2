@@ -3,6 +3,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -17,11 +18,12 @@ public class VentanaJuego extends JFrame {
 	MundoJuego miMundo;        // Mundo del juego
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
-
+	private Boolean[] pulsaciones= new Boolean[4];
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
 	 */
 	public VentanaJuego() {
+		Arrays.fill(pulsaciones, Boolean.FALSE);
 		// Liberación de la ventana por defecto al cerrar
 		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
 		// Creación contenedores y componentes
@@ -80,19 +82,40 @@ public class VentanaJuego extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_UP: {
-						miCoche.acelera( +5, 1 );
+						pulsaciones[0]=true;
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
-						miCoche.acelera( -5, 1 );
+						pulsaciones[1]=true;
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
-						miCoche.gira( +10 );
+						pulsaciones[2]=true;
 						break;
 					}
 					case KeyEvent.VK_RIGHT: {
-						miCoche.gira( -10 );
+						pulsaciones[3]=true;
+						break;
+					}
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP: {
+						pulsaciones[0]=false;
+						break;
+					}
+					case KeyEvent.VK_DOWN: {
+						pulsaciones[1]=false;
+						break;
+					}
+					case KeyEvent.VK_LEFT: {
+						pulsaciones[2]=false;
+						break;
+					}
+					case KeyEvent.VK_RIGHT: {
+						pulsaciones[3]=false;
 						break;
 					}
 				}
@@ -151,6 +174,15 @@ public class VentanaJuego extends JFrame {
 		public void run() {
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
+				if(pulsaciones[0]){
+					miCoche.acelera(+5,1);
+				}if(pulsaciones[1]){
+					miCoche.acelera(-5,1);
+				}if(pulsaciones[2]){
+					miCoche.gira(+10);
+				}if(pulsaciones[3]){
+					miCoche.gira(-10);
+				}
 				// Mover coche
 				miCoche.mueve( 0.040 );
 				// Chequear choques
